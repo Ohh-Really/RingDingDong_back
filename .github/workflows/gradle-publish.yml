@@ -1,0 +1,49 @@
+name: Deploy to cloudtype
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: cmsong111/everytime-server
+          stage: main
+          yaml: |
+            name: ringdingdong-back
+            app: java@11
+            options:
+              ports: 8080
+              start: java -jar .\build\libs\ringdingdong-0.0.1-SNAPSHOT.jar
+              build: ./gradlew clean build -x test
+              strategy: recreate
+              env:
+                - name: DB_HOST
+                  value: mariadb
+                - name: DB_PORT
+                  value: "3306"
+                - name: DB_NAME
+                  value: ringdingdong
+                - name: DB_USER
+                  value: root
+                - name: DB_PASSWORD
+                  secret: mariadb-root-password
+                - name: SPRING_PROFILES_ACTIVE
+                  value: dev
+                - name: DDL_MODE
+                  value: create
+            context:
+              git:
+                url: https://github.com/Ohh-Really/RingDingDong_back.git
+                ref: dev
