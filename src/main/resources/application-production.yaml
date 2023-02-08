@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: production
+
+  cloud:
+    gcp:
+      sql:
+        database-name: ${DB_NAME}
+        instance-connection-name: ${INSTANCE_CONNECTION_NAME}
+
+
+springdoc:
+  api-docs:
+    enabled: false
