@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Connect deploy key
         uses: cloudtype-github-actions/connect@v1
         with:
@@ -25,7 +25,7 @@ jobs:
             app: java@11
             options:
               ports: 8080
-              start: java -jar .\build\libs\ringdingdong-0.0.1-SNAPSHOT.jar
+              start: java -jar  -Duser.timezone=Asia/Seoul ./build/libs/ringdingdong-0.0.1-SNAPSHOT.jar
               build: ./gradlew clean build -x test
               strategy: recreate
               env:
