@@ -1,8 +1,7 @@
 package com.ohh_really.ringdingdong.user.entity;
 
 import com.ohh_really.ringdingdong.user.UserRole;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,13 +14,15 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "users")
 public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long upk;
     private String password;
     private String username;
-    private String userId;
+    @Id
+    private String email;
     private boolean enabled;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
