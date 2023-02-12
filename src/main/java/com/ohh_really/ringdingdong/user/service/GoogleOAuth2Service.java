@@ -25,19 +25,15 @@ import java.util.Set;
 @Service
 public class GoogleOAuth2Service {
 
-
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final ModelMapper modelMapper;
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
-
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String clientSecret;
-
     @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     private String redirectUri;
-
     @Value("${spring.security.oauth2.client.registration.google.authorization-grant-type}")
     private String authorizationGrantType;
 
@@ -48,31 +44,39 @@ public class GoogleOAuth2Service {
         this.modelMapper = modelMapper;
     }
 
+    public String getGoogleLoginUrl() {
+        String url = "https://accounts.google.com/o/oauth2/v2/auth";
+        url += "?response_type=code";
+        url += "&client_id=" + clientId;
+        url += "&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+        url += "&redirect_uri=" + redirectUri;
+        return url;
+    }
 
     public ResponseEntity<AuthorizationCode> startWithGoogle(String code) {
-
+        // 헤더 설정
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("redirect_uri", redirectUri);
         params.add("grant_type", authorizationGrantType);
         params.add("code", code);
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
-
+        // 토큰 발급
         AuthorizationCode authorizationCode = restTemplate.postForObject(
                 "https://oauth2.googleapis.com/token",
                 request,
                 AuthorizationCode.class, params
         );
+        // 유저 정보 가져오기
         GoogleUserInfo googleUserInfo = getInfo(authorizationCode.getAccessToken()).getBody();
 
-        if (!userRepository.existsByEmail(googleUserInfo.getEmail())) {
-            this.registerUser(googleUserInfo);
-        }
+        // 유저 정보 저장
+        this.registerUser(googleUserInfo);
+
+        // 유저 토큰 반환
         return ResponseEntity.ok(authorizationCode);
     }
-
 
     public ResponseEntity<GoogleUserInfo> getInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();

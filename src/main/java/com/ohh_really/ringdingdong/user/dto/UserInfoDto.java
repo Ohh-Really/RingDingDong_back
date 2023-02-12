@@ -20,5 +20,4 @@ public class UserInfoDto {
     private boolean credentialsNonExpired;
     private String picture;
     private Set<UserRole> roles;
-
 }

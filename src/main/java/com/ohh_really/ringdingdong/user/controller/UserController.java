@@ -15,39 +15,20 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
-
     private final UserService userService;
     private final GoogleOAuth2Service googleOAuth2Service;
-    private final RestTemplate restTemplate;
-
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String clientId;
-
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
-    private String clientSecret;
-
-    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
-    private String redirectUri;
 
     @Autowired
-    public UserController(GoogleOAuth2Service googleOAuth2Service, UserService userService, RestTemplate restTemplate) {
+    public UserController(GoogleOAuth2Service googleOAuth2Service, UserService userService) {
         this.userService = userService;
-        this.restTemplate = restTemplate;
         this.googleOAuth2Service = googleOAuth2Service;
     }
 
     @GetMapping("/google/login")
     @Operation(summary = "Google Login 주소")
     public String googleLogin() {
-        String url = "https://accounts.google.com/o/oauth2/v2/auth";
-        url += "?response_type=code";
-        url += "&client_id=" + clientId;
-        url += "&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
-        url += "&redirect_uri=" + redirectUri;
-        return url;
+        return googleOAuth2Service.getGoogleLoginUrl();
     }
-
 
     @GetMapping("/google/redirect")
     public ResponseEntity<AuthorizationCode> googleRedirect(
@@ -58,5 +39,4 @@ public class UserController {
     ) {
         return googleOAuth2Service.startWithGoogle(code);
     }
-
 }
