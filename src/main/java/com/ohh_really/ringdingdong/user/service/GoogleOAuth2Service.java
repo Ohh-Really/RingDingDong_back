@@ -38,6 +38,9 @@ public class GoogleOAuth2Service {
     @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     private String redirectUri;
 
+    @Value("${spring.security.oauth2.client.registration.google.authorization-grant-type}")
+    private String authorizationGrantType;
+
     @Autowired
     public GoogleOAuth2Service(UserRepository userRepository, RestTemplate restTemplate, ModelMapper modelMapper) {
         this.userRepository = userRepository;
@@ -52,7 +55,7 @@ public class GoogleOAuth2Service {
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("redirect_uri", redirectUri);
-        params.add("grant_type", "authorization_code");
+        params.add("grant_type", authorizationGrantType);
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, new HttpHeaders());
