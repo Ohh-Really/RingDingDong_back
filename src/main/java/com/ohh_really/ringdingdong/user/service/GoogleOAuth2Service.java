@@ -65,9 +65,8 @@ public class GoogleOAuth2Service {
                 request,
                 AuthorizationCode.class, params
         );
-        GoogleUserInfo googleUserInfo = getInfo(authorizationCode.getAccess_token());
+        GoogleUserInfo googleUserInfo = getInfo(authorizationCode.getAccessToken()).getBody();
 
-        System.out.println(googleUserInfo.toString());
         if (!userRepository.existsByEmail(googleUserInfo.getEmail())) {
             this.registerUser(googleUserInfo);
         }
@@ -75,7 +74,7 @@ public class GoogleOAuth2Service {
     }
 
 
-    public GoogleUserInfo getInfo(String accessToken) {
+    public ResponseEntity<GoogleUserInfo> getInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
@@ -86,7 +85,7 @@ public class GoogleOAuth2Service {
                 HttpMethod.GET,
                 request,
                 GoogleUserInfo.class
-        ).getBody();
+        );
     }
 
     public UserInfoDto registerUser(GoogleUserInfo googleUserInfo) {
