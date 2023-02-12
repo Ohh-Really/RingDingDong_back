@@ -6,7 +6,6 @@ import com.ohh_really.ringdingdong.user.dto.GoogleUserInfo;
 import com.ohh_really.ringdingdong.user.dto.UserInfoDto;
 import com.ohh_really.ringdingdong.user.entity.User;
 import com.ohh_really.ringdingdong.user.repository.UserRepository;
-import io.jsonwebtoken.Jwt;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,6 +100,7 @@ public class GoogleOAuth2Service {
                 .accountNonLocked(false)
                 .roles(Set.of(UserRole.USER))
                 .picture(googleUserInfo.getPicture())
+                .id(googleUserInfo.getId())
                 .build();
         return modelMapper.map(userRepository.save(user), UserInfoDto.class);
     }

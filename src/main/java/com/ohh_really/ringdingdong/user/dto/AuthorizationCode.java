@@ -14,4 +14,6 @@ public class AuthorizationCode {
     private String tokenType;
     @JsonProperty("id_token")
     private String idToken;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 }
