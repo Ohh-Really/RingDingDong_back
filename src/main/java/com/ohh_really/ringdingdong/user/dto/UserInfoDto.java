@@ -18,5 +18,7 @@ public class UserInfoDto {
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
+    private String picture;
     private Set<UserRole> roles;
+
 }

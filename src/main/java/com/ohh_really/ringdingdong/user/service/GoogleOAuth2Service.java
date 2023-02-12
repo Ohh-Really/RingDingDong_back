@@ -97,8 +97,8 @@ public class GoogleOAuth2Service {
                 .accountNonExpired(false)
                 .accountNonLocked(false)
                 .roles(Set.of(UserRole.USER))
+                .picture(googleUserInfo.getPicture())
                 .build();
         return modelMapper.map(userRepository.save(user), UserInfoDto.class);
-
     }
 }
