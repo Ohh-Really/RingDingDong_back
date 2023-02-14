@@ -1,15 +1,19 @@
 package com.ohh_really.ringdingdong.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class GoogleUserInfo {
     private String id;
     private String email;
-    private Boolean verified_email;
+    @JsonProperty("verified_email")
+    private Boolean verifiedEmail;
     private String name;
-    private String given_name;
-    private String family_name;
+    @JsonProperty("given_name")
+    private String givenName;
+    @JsonProperty("family_name")
+    private String familyName;
     private String picture;
     private String locale;
 }

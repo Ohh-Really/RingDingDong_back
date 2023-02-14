@@ -12,3 +12,8 @@ spring:
     url: jdbc:h2:mem:test;MODE=MYSQL
     driverClassName: org.h2.Driver
     username: sa
+
+jwt:
+  secret: thisisjwtsecret
+aes256:
+  key: thisisaes256key

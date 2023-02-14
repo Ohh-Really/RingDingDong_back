@@ -3,15 +3,20 @@ spring:
     activate:
       on-profile: production
 
-  cloud:
-    gcp:
-      project-id: ${YOUR_GCP_PROJECT_ID}
-      credentials:
-        location: ${LOCAL_PRIVATE_KEY_FILE}
-        scopes: ${SCOPE_1},${SCOPE_2},${SCOPE_3}
-      sql:
-        database-name: ${DB_NAME}
-        instance-connection-name: ${INSTANCE_CONNECTION_NAME}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: mariadb://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_MODE}
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
   security:
     oauth2:
       client:
@@ -19,9 +24,19 @@ spring:
           google:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+              - openid
             redirect-uri: ${REDIRECT_URI}
-            scope: openid, email, profile
+            authorization-grant-type: authorization_code
+            client-name: Google
+
+
 springdoc:
-  api-docs:
-    enabled: false
+  swagger-ui:
+    path: /api-docs
+
+jwt:
+  secret: ${JWT_SCERET}
 
