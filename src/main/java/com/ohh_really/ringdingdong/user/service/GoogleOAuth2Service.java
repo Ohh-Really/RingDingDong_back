@@ -52,7 +52,7 @@ public class GoogleOAuth2Service {
         return url;
     }
 
-    public ResponseEntity<AuthorizationCode> startWithGoogle(String code) {
+    public ResponseEntity<GoogleUserInfo> startWithGoogle(String code) {
         // 헤더 설정
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("client_id", clientId);
@@ -74,7 +74,7 @@ public class GoogleOAuth2Service {
         this.registerUser(googleUserInfo);
 
         // 유저 토큰 반환
-        return ResponseEntity.ok(authorizationCode);
+        return ResponseEntity.ok(googleUserInfo);
     }
 
     public ResponseEntity<GoogleUserInfo> getInfo(String accessToken) {
@@ -95,7 +95,7 @@ public class GoogleOAuth2Service {
         User user = User.builder()
                 .email(googleUserInfo.getEmail())
                 .username(googleUserInfo.getName())
-                .enabled(true)
+                .enabled(false)
                 .accountNonExpired(false)
                 .accountNonLocked(false)
                 .roles(Set.of(UserRole.USER))
