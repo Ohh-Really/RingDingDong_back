@@ -25,7 +25,8 @@ jobs:
             app: java@11
             options:
               ports: 8080
-              start: java -jar  -Duser.timezone=Asia/Seoul ./build/libs/ringdingdong-0.0.1-SNAPSHOT.jar
+              start: java -jar  -Duser.timezone=Asia/Seoul
+                ./build/libs/ringdingdong-0.0.1-SNAPSHOT.jar
               build: ./gradlew clean build -x test
               strategy: recreate
               env:
@@ -43,7 +44,15 @@ jobs:
                   value: dev
                 - name: DDL_MODE
                   value: create
+                - name: CLIENT_ID
+                  secret: CLIENT_ID
+                - name: CLIENT_SECRET
+                  secret: CLIENT_SECRET
+                - name: REDIRECT_URI
+                  secret: REDIRECT_URI
+                - name: JWT_SCERET
+                  secret: JWT-SECRET
             context:
               git:
-                url: https://github.com/Ohh-Really/RingDingDong_back.git
-                ref: dev
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
