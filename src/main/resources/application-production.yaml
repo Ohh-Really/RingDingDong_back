@@ -39,4 +39,5 @@ springdoc:
 
 jwt:
   secret: ${JWT_SCERET}
-
+server:
+  port: 80
