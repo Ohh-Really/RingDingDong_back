@@ -285,3 +285,7 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,macos,windows,java,intellij,visualstudiocode
 src/main/resources/application.yaml
+src/main/resources/credentials.json
+src/main/resources/application-production.yaml
+src/main/resources/application-dev.yaml
+.run/Cloud Run_ Deploy.run.xml
