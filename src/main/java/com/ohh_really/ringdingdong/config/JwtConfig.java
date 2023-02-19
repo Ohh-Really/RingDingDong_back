@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,28 +32,26 @@ public class JwtConfig {
         payloads.put("email", email);
         payloads.put("username", username);
 
-        Long expiredTime = 1000 * 60L * 60L * 2L; // 토큰 유효 시간 (2시간)
+        long expiredTime = 1000 * 60L * 60L * 2L; // 토큰 유효 시간 (2시간)
 
         Date ext = new Date(); // 토큰 만료 시간
         ext.setTime(ext.getTime() + expiredTime);
 
         // 토큰 Builder
-        String jwt = Jwts.builder()
+        return Jwts.builder()
                 .setHeader(headers) // Headers 설정
                 .setClaims(payloads) // Claims 설정
                 .setSubject("user") // 토큰 용도
                 .setExpiration(ext) // 토큰 만료 시간 설정
                 .signWith(SignatureAlgorithm.HS256, key.getBytes()) // HS256과 Key로 Sign
-                .compact(); // 토큰 생성
-
-        return jwt;
+                .compact();
     }
 
     public Map<String, Object> verifyJWT(String jwt) {
         Map<String, Object> claimMap = null;
         try {
             Claims claims = Jwts.parser()
-                    .setSigningKey(key.getBytes("UTF-8")) // Set Key
+                    .setSigningKey(key.getBytes(StandardCharsets.UTF_8)) // Set Key
                     .parseClaimsJws(jwt) // 파싱 및 검증, 실패 시 에러
                     .getBody();
 
