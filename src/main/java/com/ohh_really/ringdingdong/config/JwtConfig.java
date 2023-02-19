@@ -20,7 +20,7 @@ public class JwtConfig {
     String key ;
 
     //토큰 생성
-    public String createToken(String email, String username) {
+    public String createToken(User user) {
 
         //Header 부분 설정
         Map<String, Object> headers = new HashMap<>();
@@ -29,8 +29,10 @@ public class JwtConfig {
 
         //payload 부분 설정
         Map<String, Object> payloads = new HashMap<>();
-        payloads.put("email", email);
-        payloads.put("username", username);
+        payloads.put("email", user.getEmail());
+        payloads.put("username", user.getUsername());
+        payloads.put("roles", user.getRoles());
+        payloads.put("enabled", user.isEnabled());
 
         long expiredTime = 1000 * 60L * 60L * 2L; // 토큰 유효 시간 (2시간)
 
