@@ -51,7 +51,7 @@ class UserControllerTest {
         ResponseEntity<String> secondResponse = userController.login(googleLoginFormDto);
 
         assertEquals(201, firstResponse.getStatusCodeValue());
-        assertEquals(202, secondResponse.getStatusCodeValue());
+        assertEquals(201, secondResponse.getStatusCodeValue());
     }
 
     @Test

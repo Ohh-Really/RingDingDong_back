@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,29 +33,29 @@ public class UserService {
     }
 
     public ResponseEntity<String> login(GoogleLoginFormDto googleLoginFormDto) {
+
+        if (googleLoginFormDto.getEmail() == null || googleLoginFormDto.getId() == null) {
+            return ResponseEntity.badRequest().body("이메일 또는 id가 없습니다.");
+        }
+        boolean update = googleLoginFormDto.getDisplayName() != null || googleLoginFormDto.getPhotoUrl() != null;
         Optional<User> user = userRepository.findById(googleLoginFormDto.getEmail());
-        if (user.isEmpty()) {
+
+        if (user.isEmpty() && update) {
             return registerWithGoogleUser(googleLoginFormDto);
-        } else if (!user.get().getId().equals(googleLoginFormDto.getId())) {
-            return ResponseEntity.badRequest().body("id가 일치하지 않습니다.");
-        } else if (!user.get().isEnabled()) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(jwtConfig.createToken(user.get()));
+        } else if (user.isPresent() && update) {
+            return updateWithGoogleUser(googleLoginFormDto);
+        } else if (user.get().getId().equals(googleLoginFormDto.getId())) {
+            if (user.get().isEnabled()) {
+                return ResponseEntity.ok(jwtConfig.createToken(user.get()));
+            } else {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(jwtConfig.createToken(user.get()));
+            }
         } else {
-            return ResponseEntity.ok(jwtConfig.createToken(user.get()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 일치하지 않습니다.");
         }
     }
 
     public ResponseEntity<String> registerWithGoogleUser(GoogleLoginFormDto googleLoginFormDto) {
-        if (googleLoginFormDto.getDisplayName() == null) {
-            return ResponseEntity.badRequest().body("이름이 없습니다.");
-        }
-        if (googleLoginFormDto.getEmail() == null) {
-            return ResponseEntity.badRequest().body("이메일이 없습니다.");
-        }
-        if (googleLoginFormDto.getId() == null) {
-            return ResponseEntity.badRequest().body("id가 없습니다.");
-        }
-
         User user = User.builder()
                 .email(googleLoginFormDto.getEmail())
                 .username(googleLoginFormDto.getDisplayName())
@@ -66,6 +67,25 @@ public class UserService {
                 .id(googleLoginFormDto.getId())
                 .build();
         return ResponseEntity.created(null).body(jwtConfig.createToken(userRepository.save(user)));
+    }
+
+    public ResponseEntity<String> updateWithGoogleUser(GoogleLoginFormDto googleLoginFormDto) {
+        Optional<User> user = userRepository.findById(googleLoginFormDto.getEmail());
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!user.get().getId().equals(googleLoginFormDto.getId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 일치하지 않습니다.");
+        }
+
+        user.get().setUsername(googleLoginFormDto.getDisplayName());
+        user.get().setPicture(googleLoginFormDto.getPhotoUrl());
+
+        if (!user.get().isEnabled()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(jwtConfig.createToken(userRepository.save(user.get())));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(jwtConfig.createToken(userRepository.save(user.get())));
     }
 
     public ResponseEntity<String> policyAgree(String token) {
