@@ -1,71 +1,52 @@
 package com.ohh_really.ringdingdong.user.controller;
 
-import com.ohh_really.ringdingdong.user.dto.AuthorizationCode;
-import com.ohh_really.ringdingdong.user.dto.GoogleUserInfo;
+import com.ohh_really.ringdingdong.user.dto.GoogleLoginFormDto;
 import com.ohh_really.ringdingdong.user.dto.LoginFormDto;
 import com.ohh_really.ringdingdong.user.dto.UserInfoDto;
-import com.ohh_really.ringdingdong.user.service.GoogleOAuth2Service;
 import com.ohh_really.ringdingdong.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jdk.jfr.ContentType;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 
+@Tag(name = "User", description = "사용자 관련 API")
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final GoogleOAuth2Service googleOAuth2Service;
 
     @Autowired
-    public UserController(GoogleOAuth2Service googleOAuth2Service, UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.googleOAuth2Service = googleOAuth2Service;
     }
 
-    @GetMapping("/google/login")
-    @Operation(summary = "Google Login 주소")
-    public String googleLogin() {
-        return googleOAuth2Service.getGoogleLoginUrl();
-    }
-
-    @GetMapping("/google/redirect")
-    @Operation(summary = "Google Login Redirect")
-    @ApiResponse(responseCode = "200", description = "로그인 성공")
-    @ApiResponse(responseCode = "201", description = "회원가입 성공(정책 미동의)")
-    public ResponseEntity<LoginFormDto> googleRedirect(
-            @RequestParam("code") String code,
-            @RequestParam("scope") String scope,
-            @RequestParam("authuser") String authuser,
-            @RequestParam("prompt") String prompt
-    ) {
-        return googleOAuth2Service.startWithGoogle(code);
-    }
 
     @PostMapping("/login")
     @Operation(summary = "로그인")
     @ApiResponse(responseCode = "200", description = "로그인 성공")
-    @ApiResponse(responseCode = "403", description = "정책 미동의 계정")
-    @ApiResponse(responseCode = "404", description = "존재하지 않는 계정")
+    @ApiResponse(responseCode = "201", description = "구글 회원가입 성공 & 정책 미동의 계정")
+    @ApiResponse(responseCode = "202", description = "정책 미동의 계정")
+    @ApiResponse(responseCode = "400", description = "구글 회원가입 실패")
+    @ApiResponse(responseCode = "404", description = "id가 일치하지 않음")
     public ResponseEntity<String> login(
-            @RequestBody LoginFormDto loginFormDto
+            @RequestBody GoogleLoginFormDto googleLoginFormDto
     ) {
-        return userService.login(loginFormDto);
+        return userService.login(googleLoginFormDto);
     }
 
     @PostMapping("/policyAgree")
     @Operation(summary = "개인정보 수집 및 이용 동의")
+    @ApiResponse(responseCode = "200", description = "개인정보 수집 및 이용 동의 성공")
+    @ApiResponse(responseCode = "202", description = "이미 동의한 계정")
     public ResponseEntity<String> policyAgree(
-            @RequestBody LoginFormDto loginFormDto
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
     ) {
-        return userService.policyAgree(loginFormDto);
+        return userService.policyAgree(token);
     }
 
     @PostMapping("/info")
