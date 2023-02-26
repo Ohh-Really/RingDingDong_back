@@ -31,6 +31,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.google.cloud:spring-cloud-gcp-starter'
 	implementation 'org.springframework.cloud:spring-cloud-gcp-starter-sql-mysql:1.2.8.RELEASE'
+	implementation 'com.google.cloud:spring-cloud-gcp-starter-pubsub'
+	implementation 'org.springframework.integration:spring-integration-core'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
 	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.1.0'
 	implementation 'mysql:mysql-connector-java:8.0.32'
@@ -44,7 +46,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-
 }
 
 dependencyManagement {
