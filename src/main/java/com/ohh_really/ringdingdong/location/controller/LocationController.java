@@ -1,15 +1,14 @@
 package com.ohh_really.ringdingdong.location.controller;
 
 import com.ohh_really.ringdingdong.location.entity.Location;
+import com.ohh_really.ringdingdong.location.kakaoapi.Root;
 import com.ohh_really.ringdingdong.location.service.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -26,10 +25,20 @@ public class LocationController {
     @GetMapping("/find")
     @Operation(summary = "Find location by country, state and city")
     public ResponseEntity<ArrayList<Location>> find(
-            @RequestParam String country,
-            @RequestParam String state,
-            @RequestParam String city
+            @RequestParam String region,
+            @RequestParam String region1,
+            @RequestParam(required = false) String region2
     ) {
-        return locationService.findByCountryAndStateAndCity(country, state, city);
+        return locationService.findByCountryAndStateAndCity(region, region1, region2);
+    }
+
+    @PostMapping("/update-location")
+    @Operation(summary = "Update location by gps")
+    public ResponseEntity<Root> updateLocation(
+            @RequestParam Double x,
+            @RequestParam Double y,
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
+    ) {
+        return locationService.updateLocation(x, y, token);
     }
 }

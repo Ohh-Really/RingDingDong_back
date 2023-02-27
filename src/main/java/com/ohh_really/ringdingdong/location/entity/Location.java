@@ -15,9 +15,8 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String country;
-    private String state;
-    private String city;
-    private String town;
-    private String village;
+    private String region;
+    private String region1;
+    private String region2;
+    private String region3;
 }
