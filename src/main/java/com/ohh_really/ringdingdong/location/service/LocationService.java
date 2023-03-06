@@ -88,6 +88,12 @@ public class LocationService {
         return ResponseEntity.ok(location.get());
     }
 
-    
-
+    public ResponseEntity<ArrayList<Favorite>> getFavoriteLocation(String token) {
+        Map<String, Object> claims = jwtConfig.verifyJWT(token);
+        Optional<User> user = userRepository.findById((String) claims.get("email"));
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(favoriteRepository.findByUser(user.get()));
+    }
 }

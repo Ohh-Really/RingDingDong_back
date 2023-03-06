@@ -1,5 +1,6 @@
 package com.ohh_really.ringdingdong.location.controller;
 
+import com.ohh_really.ringdingdong.location.entity.Favorite;
 import com.ohh_really.ringdingdong.location.entity.Location;
 import com.ohh_really.ringdingdong.location.service.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,5 +40,13 @@ public class LocationController {
             @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
     ) {
         return locationService.updateCurrentLocation(x, y, token);
+    }
+
+    @GetMapping("/favorite")
+    @Operation(summary = "Get favorite location")
+    public ResponseEntity<ArrayList<Favorite>> getFavoriteLocaion(
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
+    ){
+        return locationService.getFavoriteLocation(token);
     }
 }
