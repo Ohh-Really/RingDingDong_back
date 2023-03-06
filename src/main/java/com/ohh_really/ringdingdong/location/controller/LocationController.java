@@ -44,9 +44,19 @@ public class LocationController {
 
     @GetMapping("/favorite")
     @Operation(summary = "Get favorite location")
-    public ResponseEntity<ArrayList<Favorite>> getFavoriteLocaion(
+    public ResponseEntity<ArrayList<Location>> getFavoriteLocation(
             @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
     ){
         return locationService.getFavoriteLocation(token);
     }
+
+    @PostMapping("/favorite")
+    @Operation(summary = "Add favorite location / first is current location")
+    public ResponseEntity<Location> addFavoriteLocation(
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token,
+            @RequestParam Long locationId
+    ){
+        return locationService.addFavoriteLocation(token, locationId);
+    }
+
 }

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -88,12 +89,34 @@ public class LocationService {
         return ResponseEntity.ok(location.get());
     }
 
-    public ResponseEntity<ArrayList<Favorite>> getFavoriteLocation(String token) {
+    public ResponseEntity<ArrayList<Location>> getFavoriteLocation(String token) {
         Map<String, Object> claims = jwtConfig.verifyJWT(token);
         Optional<User> user = userRepository.findById((String) claims.get("email"));
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(favoriteRepository.findByUser(user.get()));
+        ArrayList<Favorite> favorites = favoriteRepository.findByUser(user.get());
+        ArrayList<Location> locations = new ArrayList<>();
+        Collections.sort(favorites);
+        for (Favorite favorite : favorites) {
+            locations.add(favorite.getLocation());
+        }
+        return ResponseEntity.ok(locations);
+    }
+
+    public ResponseEntity<Location> addFavoriteLocation(String token, Long FavoriteId) {
+        Map<String, Object> claims = jwtConfig.verifyJWT(token);
+        Optional<User> user = userRepository.findById((String) claims.get("email"));
+        Optional<Location> location = locationRepository.findById(FavoriteId);
+        if (user.isEmpty() || location.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        Favorite favorite = Favorite.builder()
+                .location(location.get())
+                .user(user.get())
+                .isCurrent(false)
+                .build();
+        favoriteRepository.save(favorite);
+        return ResponseEntity.ok(location.get());
     }
 }
