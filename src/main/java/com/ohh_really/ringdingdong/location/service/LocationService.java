@@ -119,4 +119,15 @@ public class LocationService {
         favoriteRepository.save(favorite);
         return ResponseEntity.ok(location.get());
     }
+
+    public ResponseEntity<String> deleteFavoriteLocation(String token, Long FavoriteId) {
+        Map<String, Object> claims = jwtConfig.verifyJWT(token);
+        Optional<User> user = userRepository.findById((String) claims.get("email"));
+        Optional<Favorite> favorite = favoriteRepository.findById(FavoriteId);
+        if (user.isEmpty() || favorite.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        favoriteRepository.delete(favorite.get());
+        return ResponseEntity.ok("삭제되었습니다.");
+    }
 }

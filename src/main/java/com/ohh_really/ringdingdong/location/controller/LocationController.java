@@ -59,4 +59,13 @@ public class LocationController {
         return locationService.addFavoriteLocation(token, locationId);
     }
 
+    @DeleteMapping("/favorite")
+    @Operation(summary = "Delete favorite location")
+    public ResponseEntity<String> deleteFavoriteLocation(
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token,
+            @RequestParam Long locationId
+    ){
+        return locationService.deleteFavoriteLocation(token, locationId);
+    }
+
 }
