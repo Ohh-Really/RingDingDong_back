@@ -1,7 +1,6 @@
 package com.ohh_really.ringdingdong.location.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,12 +10,17 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String region;
-    private String region1;
-    private String region2;
-    private String region3;
+    private String fullName;
+    private String level1;
+    private String level2;
+    private String level3;
+    private String level4;
 }

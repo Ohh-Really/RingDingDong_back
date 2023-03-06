@@ -6,14 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
-
-    ArrayList<Location> findByRegionAndRegion1AndRegion2(String region, String region1, String region2);
-
-    ArrayList<Location> findByRegionAndRegion1(String region, String region1);
-
-
-
+    ArrayList<Location> findByRegionAndLevel1AndLevel2(String region, String level1, String level2);
+    ArrayList<Location> findByRegionAndLevel1(String region, String level1);
+    Optional<Location> findByLevel1AndLevel2AndLevel3AndLevel4(String level1, String level2, String level3, String level4);
 }

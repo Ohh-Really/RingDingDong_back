@@ -1,7 +1,6 @@
 package com.ohh_really.ringdingdong.location.controller;
 
 import com.ohh_really.ringdingdong.location.entity.Location;
-import com.ohh_really.ringdingdong.location.kakaoapi.Root;
 import com.ohh_really.ringdingdong.location.service.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,19 +25,19 @@ public class LocationController {
     @Operation(summary = "Find location by country, state and city")
     public ResponseEntity<ArrayList<Location>> find(
             @RequestParam String region,
-            @RequestParam String region1,
-            @RequestParam(required = false) String region2
+            @RequestParam String level1,
+            @RequestParam(required = false) String level2
     ) {
-        return locationService.findByCountryAndStateAndCity(region, region1, region2);
+        return locationService.findByCountryAndStateAndCity(region, level1, level2);
     }
 
     @PostMapping("/update-location")
     @Operation(summary = "Update location by gps")
-    public ResponseEntity<Root> updateLocation(
+    public ResponseEntity<Location> updateLocation(
             @RequestParam Double x,
             @RequestParam Double y,
             @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
     ) {
-        return locationService.updateLocation(x, y, token);
+        return locationService.updateCurrentLocation(x, y, token);
     }
 }

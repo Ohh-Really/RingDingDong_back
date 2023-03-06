@@ -1,7 +1,9 @@
 package com.ohh_really.ringdingdong.location.kakaoapi;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class Document {
     @JsonProperty("region_type")
     public String regionType;
