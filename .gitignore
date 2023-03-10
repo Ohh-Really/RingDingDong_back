@@ -289,3 +289,4 @@ src/main/resources/credentials.json
 src/main/resources/application-production.yaml
 src/main/resources/application-dev.yaml
 .run/Cloud Run_ Deploy.run.xml
+/src/main/resources/firebase_service_key.json
