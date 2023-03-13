@@ -2,15 +2,16 @@ package com.ohh_really.ringdingdong.fcm.service;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.auth.oauth2.GoogleCredentials;
+
 import com.ohh_really.ringdingdong.fcm.dto.FcmMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
+import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -25,9 +26,14 @@ public class FcmService {
         String message = makeMessage(targetToken, title, body);
 
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken());
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8");
+        headers.add("Authorization", "Bearer " + getAccessToken());
+        headers.add("Content-Type", "application/json; UTF-8");
+
+        System.out.println(getAccessToken());
+        System.out.println(message);
 
         ResponseEntity<String> response =  restTemplate.postForEntity(API_URL, message, String.class, headers);
 
@@ -49,9 +55,11 @@ public class FcmService {
     }
     private String getAccessToken() throws IOException {
         URL resource = getClass().getResource("firebase_service_key.json");
+        String firebaseServiceKeyPath = "firebase_service_key.json";
+
 
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(resource.getPath()).getInputStream())
+                .fromStream(new ClassPathResource(firebaseServiceKeyPath).getInputStream())
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
         googleCredentials.refreshIfExpired();

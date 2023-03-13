@@ -2,6 +2,7 @@ package com.ohh_really.ringdingdong.fcm.controller;
 
 import com.ohh_really.ringdingdong.fcm.dto.FcmMessage;
 import com.ohh_really.ringdingdong.fcm.service.FcmService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class FcmController {
     }
 
     @PostMapping("/fcm")
+    @Operation(summary = "Send FCM Message")
     public ResponseEntity<String> pushMessage(
             @RequestBody FcmMessage fcmMessage) throws Exception {
         fcmService.sendMessageTo(

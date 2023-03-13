@@ -4,14 +4,16 @@ import lombok.*;
 
 @Builder
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
+@Data
 public class FcmMessage {
     private boolean validateOnly;
     private Message message;
 
     @Builder
     @AllArgsConstructor
-    @Getter
+    @NoArgsConstructor
+    @Data
     public static class Message {
         private Notification notification;
         private String token;
@@ -19,7 +21,8 @@ public class FcmMessage {
 
     @Builder
     @AllArgsConstructor
-    @Getter
+    @NoArgsConstructor
+    @Data
     public static class Notification {
         private String title;
         private String body;
