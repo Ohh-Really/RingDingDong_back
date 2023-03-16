@@ -3,10 +3,16 @@ package com.ohh_really.ringdingdong.fcm.service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ohh_really.ringdingdong.fcm.dto.FcmMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -32,15 +38,12 @@ public class FcmService {
         headers.add("Authorization", "Bearer " + getAccessToken());
         headers.add("Content-Type", "application/json; UTF-8");
 
-        System.out.println(getAccessToken());
-        System.out.println(message);
+        HttpEntity<String> entity = new HttpEntity<String>(message, headers);
 
-        ResponseEntity<String> response =  restTemplate.postForEntity(API_URL, message, String.class, headers);
-
-        System.out.println(response.getBody().toString());
+        ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
     }
 
-    private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
+    private String makeMessage(String targetToken, String title, String body) throws  JsonProcessingException {
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(FcmMessage.Message.builder()
                         .token(targetToken)
@@ -51,10 +54,13 @@ public class FcmService {
                                 .build()
                         ).build()).validateOnly(false).build();
 
-        return fcmMessage.toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String message = objectMapper.writeValueAsString(fcmMessage);
+
+        return message;
     }
     private String getAccessToken() throws IOException {
-        URL resource = getClass().getResource("firebase_service_key.json");
+
         String firebaseServiceKeyPath = "firebase_service_key.json";
 
 
