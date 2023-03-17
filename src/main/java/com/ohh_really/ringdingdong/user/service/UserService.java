@@ -2,6 +2,7 @@ package com.ohh_really.ringdingdong.user.service;
 
 import com.ohh_really.ringdingdong.config.JwtConfig;
 import com.ohh_really.ringdingdong.user.UserRole;
+import com.ohh_really.ringdingdong.user.dto.FcmTokenDto;
 import com.ohh_really.ringdingdong.user.dto.GoogleLoginFormDto;
 import com.ohh_really.ringdingdong.user.dto.LoginFormDto;
 import com.ohh_really.ringdingdong.user.dto.UserInfoDto;
@@ -115,5 +116,19 @@ public class UserService {
         return ResponseEntity.ok(
                 modelMapper.map(user.get(), UserInfoDto.class)
         );
+    }
+
+    public ResponseEntity<String> updateFcmToken(String token, FcmTokenDto fcmTokenDto){
+
+        Map<String, Object> claims = jwtConfig.verifyJWT(token);
+        String email = (String) claims.get("email");
+
+        Optional<User> user = userRepository.findById(email);
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        user.get().setFcmToken(fcmTokenDto.getToken());
+        userRepository.save(user.get());
+        return ResponseEntity.ok("fcm Token 업데이트 되었습니다.");
     }
 }
