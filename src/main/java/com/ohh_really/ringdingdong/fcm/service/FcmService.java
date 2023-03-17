@@ -28,6 +28,7 @@ public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/boreal-array-376705/messages:send";
 
 
+
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
         String message = makeMessage(targetToken, title, body);
 

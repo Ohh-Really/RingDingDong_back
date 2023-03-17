@@ -14,4 +14,12 @@ import java.util.Optional;
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     Optional<Favorite> findByUserAndIsCurrentTrue(User user);
     ArrayList<Favorite> findByUser(User user);
+
+    ArrayList<Favorite> findByLocation_Region(String region);
+
+    ArrayList<Favorite> findByLocation_RegionAndLocation_Level1(String region, String level1);
+
+
+
+
 }
