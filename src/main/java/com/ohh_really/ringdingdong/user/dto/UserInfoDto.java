@@ -21,4 +21,5 @@ public class UserInfoDto {
     private String picture;
     private String id;
     private Set<UserRole> roles;
+    private String fcmToken;
 }
