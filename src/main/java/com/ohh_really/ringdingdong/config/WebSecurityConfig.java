@@ -25,13 +25,18 @@ public class WebSecurityConfig {
     }
 
 
-    //TODO: 재설정 필요 (현재 보안 없음)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
-        http.authorizeRequests((authorize) -> authorize
-                .anyRequest().permitAll());
+        http
+            .csrf().disable()
+            .headers().frameOptions().disable()
+            .and()
+                .authorizeRequests()
+                .antMatchers("/user/login", "/user/policyAgree").permitAll()
+                .antMatchers("/fcm/**").hasAnyRole("ADMIN", "SUPER_ADMIN", "DEVELOPER")
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html","/api-docs").permitAll()
+                .anyRequest().authenticated();
+
         return http.build();
     }
 }
