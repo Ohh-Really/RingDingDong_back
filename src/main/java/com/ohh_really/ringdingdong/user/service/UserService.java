@@ -14,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -118,7 +115,7 @@ public class UserService {
         );
     }
 
-    public ResponseEntity<String> updateFcmToken(String token, FcmTokenDto fcmTokenDto){
+    public ResponseEntity<String> updateFcmToken(String token, FcmTokenDto fcmTokenDto) {
 
         Map<String, Object> claims = jwtConfig.verifyJWT(token);
         String email = (String) claims.get("email");
@@ -131,4 +128,35 @@ public class UserService {
         userRepository.save(user.get());
         return ResponseEntity.ok("fcm Token 업데이트 되었습니다.");
     }
+
+    public ResponseEntity<String> updateRole(String token, UserRole userRole) {
+        Map<String, Object> claims = jwtConfig.verifyJWT(token);
+        String email = (String) claims.get("email");
+
+        Optional<User> user = userRepository.findById(email);
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Set<UserRole> roles = user.get().getRoles();
+        roles.add(userRole);
+        user.get().setRoles(roles);
+        userRepository.save(user.get());
+        return ResponseEntity.ok("권한이 변경되었습니다.");
+    }
+    public ResponseEntity<String> resetRole(String token) {
+        Map<String, Object> claims = jwtConfig.verifyJWT(token);
+        String email = (String) claims.get("email");
+
+        Optional<User> user = userRepository.findById(email);
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Set<UserRole> roles = new HashSet<>();
+        roles.add(UserRole.USER);
+
+        user.get().setRoles(roles);
+        userRepository.save(user.get());
+        return ResponseEntity.ok("권한이 초기화 되었습니다.");
+    }
+
 }

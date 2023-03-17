@@ -1,5 +1,6 @@
 package com.ohh_really.ringdingdong.user.controller;
 
+import com.ohh_really.ringdingdong.user.UserRole;
 import com.ohh_really.ringdingdong.user.dto.FcmTokenDto;
 import com.ohh_really.ringdingdong.user.dto.GoogleLoginFormDto;
 import com.ohh_really.ringdingdong.user.dto.LoginFormDto;
@@ -68,4 +69,22 @@ public class UserController {
     ) {
         return userService.updateFcmToken(token, fcmTokenDto);
     }
+
+    @PostMapping("/updateRole")
+    @Operation(summary = "권한 업데이트")
+    public ResponseEntity<String> udpateRole(
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token,
+            @Parameter(name = "role", description = "유저 역할") @RequestParam UserRole role
+    ) {
+        return userService.updateRole(token, role);
+    }
+
+    @PostMapping("/resetRole")
+    @Operation(summary = "권한 초기화")
+    public ResponseEntity<String> resetRole(
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
+    ) {
+        return userService.resetRole(token);
+    }
+
 }
