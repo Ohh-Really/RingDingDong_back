@@ -29,6 +29,8 @@ public class User implements UserDetails {
     private boolean credentialsNonExpired;
     private String picture;
     private String id;
+    private String fcmToken;
+
     @Enumerated(value = EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<UserRole> roles;

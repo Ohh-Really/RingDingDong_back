@@ -1,5 +1,6 @@
 package com.ohh_really.ringdingdong.user.controller;
 
+import com.ohh_really.ringdingdong.user.dto.FcmTokenDto;
 import com.ohh_really.ringdingdong.user.dto.GoogleLoginFormDto;
 import com.ohh_really.ringdingdong.user.dto.LoginFormDto;
 import com.ohh_really.ringdingdong.user.dto.UserInfoDto;
@@ -57,5 +58,14 @@ public class UserController {
             @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token
     ) {
         return userService.getUserInfo(token);
+    }
+
+    @PostMapping("/fcmToken")
+    @Operation(summary = "토큰 업데이트")
+    public ResponseEntity<String> setFcmToken(
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token,
+            @RequestBody FcmTokenDto fcmTokenDto
+    ) {
+        return userService.updateFcmToken(token, fcmTokenDto);
     }
 }
