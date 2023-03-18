@@ -42,12 +42,10 @@ public class FcmController {
     @PostMapping("/fcm/country")
     @Operation(summary = "국가별 FCM 전송, Token Null 로 보내주세요")
     public ResponseEntity<String> pushMessageByCountry(
-            @RequestBody FcmMessage fcmMessage) throws Exception {
-        fcmService.sendMessageToCountry(
-                fcmMessage.getMessage().getNotification().getTitle(),
-                fcmMessage.getMessage().getNotification().getBody()
-        );
-        return ResponseEntity.ok("OK");
+            @Parameter(name = "jwt", description = "유저 토큰") @RequestHeader(value = "jwt") String token,
+            @RequestBody RegionMessageDto regionMessageDto
+    ) throws Exception {
+        return fcmMessingService.sendMessageToCountry(regionMessageDto, token);
     }
 }
 
